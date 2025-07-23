@@ -96,11 +96,12 @@ function buildUpRestAPI ( rest ) {
 	})
 	rest.get('/handlers/buffer', async function ( request, content ) {
 		console.log( 'Received:' + request.format() )
-		return new Buffer( 'ok', 'utf-8')
+		return Buffer.from( 'ok', 'utf-8')
 	}, { contentType: 'application/text' } )
 	rest.get('/handlers/stream/:file', async function ( request, content ) {
 		console.log( 'Received::' + request.format(), request.params )
-		return { result: fs.createReadStream( './test/data/' + request.params.file + '.text', { encoding: 'utf-8'} ), options: {statusCode: 201} }
+		const sanitizedFile = request.params.file.replace(/[^a-zA-Z0-9_-]/g, '');
+		return { result: fs.createReadStream( './test/data/' + sanitizedFile + '.text', { encoding: 'utf-8'} ), options: {statusCode: 201} }
 	})
 
 	rest.get( '/convert/@format', async function ( request, content ) {
@@ -134,7 +135,8 @@ function buildUpRestAPI ( rest ) {
 
 function getDispatcher (rest) {
 	return rest.dispatcher( 'GET', '/dispatcher/:subject', function (req, res, next) {
-		res.end( 'Dispatch call made:' + req.params.subject )
+		const sanitizedSubject = req.params.subject.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		res.end( 'Dispatch call made:' + sanitizedSubject )
 	} )
 }
 

@@ -47,7 +47,7 @@ app.use( restBuilder.getDispatcher( Rest ) )
 restBuilder.buildUpRestAPI( rester )
 
 let port = process.env.PORT || 8080
-let server = http.createServer(app)
+let server = https.createServer(app) // Changed from http to https
 
 server.listen( port, function () {
 	console.log('Running on http://localhost:8080')

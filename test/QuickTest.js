@@ -1,5 +1,7 @@
 let should = require('chai').should()
 let http = require('http')
+let https = require('https')
+let fs = require('fs')
 
 let connect = require('connect')
 let bodyParser = require('body-parser')
@@ -33,15 +35,18 @@ app.use( restBuilder.getDispatcher( rest ) )
 restBuilder.buildUpRestAPI( rest )
 
 let port = process.env.PORT || 8080
-let server = http.createServer(app)
+let server = https.createServer({
+	key: fs.readFileSync('path/to/private/key.pem'),
+	cert: fs.readFileSync('path/to/certificate.pem')
+}, app)
 
 server.listen( port, function () {
-	console.log('Running on http://localhost:8080')
+	console.log('Running on https://localhost:8080')
 })
 
 
 function doCall () {
-	httphelper.generalCall( 'http://localhost:8080/', 'GET', {'x-api-key': '849b7648-14b8-4154-9ef2-8d1dc4c2b7e9'}, null, null, 'application/json', logger, function (err, result, status) {
+	httphelper.generalCall( 'https://localhost:8080/', 'GET', {'x-api-key': '849b7648-14b8-4154-9ef2-8d1dc4c2b7e9'}, null, null, 'application/json', logger, function (err, result, status) {
 		should.not.exist(err)
 		should.exist(result)
 

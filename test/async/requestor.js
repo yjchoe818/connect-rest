@@ -2,7 +2,7 @@ let rest = require('../../lib/connect-rest')
 let Httphelper = require('../../lib/HttpHelper')
 let httphelper = new Httphelper()
 
-let http = require('http')
+let https = require('https') // Changed from 'http' to 'https'
 let querystring = require('querystring')
 
 let connect = require('connect')
@@ -19,7 +19,7 @@ let options = {
 }
 connectApp.use( rest.rester( options ) )
 
-let server = http.createServer( connectApp )
+let server = https.createServer( connectApp ) // Changed from 'http.createServer' to 'https.createServer'
 
 server.listen( 8090 )
 
