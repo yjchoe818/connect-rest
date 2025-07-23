@@ -33,6 +33,11 @@ rest.post( { path: '/make', version: '>=1.0.0' }, debug)
 rest.post( [ '/act', '/do' ], debug)
 rest.post( [ { path: '/shake', version: '>=2.0.0' }, { path: '/twist', version: '>=2.1.1' } ], debug)
 
-http.createServer(app).listen(PORT, function () {
-	console.log('Running on http://localhost:'+PORT)
+const https = require('https');
+const options = {
+	key: fs.readFileSync('path/to/private-key.pem'),
+	cert: fs.readFileSync('path/to/certificate.pem')
+};
+https.createServer(options, app).listen(PORT, function () {
+	console.log('Running on https://localhost:'+PORT)
 })

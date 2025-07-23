@@ -19,7 +19,16 @@ let options = {
 }
 connectApp.use( rest.rester( options ) )
 
-let server = http.createServer( connectApp )
+let https = require('https') // Use the https module instead of http
+let fs = require('fs')
+
+// Load SSL certificate and key
+let optionsSSL = {
+	key: fs.readFileSync('path/to/private-key.pem'),
+	cert: fs.readFileSync('path/to/certificate.pem')
+}
+
+let server = https.createServer( optionsSSL, connectApp ) // Create an HTTPS server
 
 server.listen( 8090 )
 
