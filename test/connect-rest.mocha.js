@@ -2,7 +2,8 @@ const assert = require('assert')
 
 let chai = require('chai'),
 	should = chai.should()
-let http = require('http')
+// Change from http to https
+let https = require('https')
 
 let connect = require('connect')
 let bodyParser = require('body-parser')
@@ -54,7 +55,8 @@ describe('connect-rest', function () {
 		restBuilder.buildUpRestAPI( rester )
 
 		let port = process.env.PORT || 8080
-		server = http.createServer(app)
+		// Use https.createServer instead of http.createServer
+		server = https.createServer(app)
 
 		server.listen( port, function () {
 			console.log('Running on http://localhost:8080')

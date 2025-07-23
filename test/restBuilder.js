@@ -1,5 +1,6 @@
 let fs = require('fs')
 let Proback = require('proback.js')
+let path = require('path') // Add path module for path validation
 
 function buildUpRestAPI ( rest ) {
 	// rest.context( '/api' )
@@ -96,11 +97,12 @@ function buildUpRestAPI ( rest ) {
 	})
 	rest.get('/handlers/buffer', async function ( request, content ) {
 		console.log( 'Received:' + request.format() )
-		return new Buffer( 'ok', 'utf-8')
+		return Buffer.from( 'ok', 'utf-8') // Use Buffer.from instead of new Buffer
 	}, { contentType: 'application/text' } )
 	rest.get('/handlers/stream/:file', async function ( request, content ) {
 		console.log( 'Received::' + request.format(), request.params )
-		return { result: fs.createReadStream( './test/data/' + request.params.file + '.text', { encoding: 'utf-8'} ), options: {statusCode: 201} }
+		let safePath = path.join(__dirname, 'test', 'data', path.basename(request.params.file) + '.text'); // Sanitize path
+		return { result: fs.createReadStream(safePath, { encoding: 'utf-8'} ), options: {statusCode: 201} }
 	})
 
 	rest.get( '/convert/@format', async function ( request, content ) {
@@ -134,7 +136,8 @@ function buildUpRestAPI ( rest ) {
 
 function getDispatcher (rest) {
 	return rest.dispatcher( 'GET', '/dispatcher/:subject', function (req, res, next) {
-		res.end( 'Dispatch call made:' + req.params.subject )
+		let sanitizedSubject = req.params.subject.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Sanitize input
+		res.end( 'Dispatch call made:' + sanitizedSubject )
 	} )
 }
 

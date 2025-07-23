@@ -1,4 +1,6 @@
 let http = require('http')
+let https = require('https')
+let fs = require('fs')
 
 let connect = require('connect'),
 	cookieParser = require('cookie-parser'),
@@ -18,7 +20,7 @@ let app = connect()
 	.use( cookieSession( {
 		name: 'demo.sid',
 		secret: 'secretPass',
-		cookie: { httpOnly: true }
+		cookie: { httpOnly: true, secure: true } // Set secure to true
 	} ) )
 	.use( bodyParser.urlencoded( { extended: true } ) )
 	.use( bodyParser.json() )
@@ -39,8 +41,11 @@ app.use( restBuilder.getDispatcher( rest ) )
 restBuilder.buildUpRestAPI( rest )
 
 let port = process.env.PORT || 8080
-let server = http.createServer(app)
+let server = https.createServer({ // Use https instead of http
+	key: fs.readFileSync('path/to/privatekey.pem'), // Add path to your SSL key
+	cert: fs.readFileSync('path/to/certificate.pem') // Add path to your SSL certificate
+}, app)
 
 server.listen( port, function () {
-	console.log('Running on http://localhost:8080')
+	console.log('Running on https://localhost:8080')
 })
