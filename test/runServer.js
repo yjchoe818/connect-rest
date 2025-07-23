@@ -18,7 +18,7 @@ let app = connect()
 	.use( cookieSession( {
 		name: 'demo.sid',
 		secret: 'secretPass',
-		cookie: { httpOnly: true }
+		cookie: { httpOnly: true, secure: true } // Set Secure attribute to true
 	} ) )
 	.use( bodyParser.urlencoded( { extended: true } ) )
 	.use( bodyParser.json() )
@@ -39,7 +39,7 @@ app.use( restBuilder.getDispatcher( rest ) )
 restBuilder.buildUpRestAPI( rest )
 
 let port = process.env.PORT || 8080
-let server = http.createServer(app)
+let server = http.createServer(app) // This line should be modified to use https
 
 server.listen( port, function () {
 	console.log('Running on http://localhost:8080')

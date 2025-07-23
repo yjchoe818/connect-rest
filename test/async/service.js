@@ -1,7 +1,8 @@
 let rest = require('../../lib/connect-rest')
 
-let http = require('http')
+let https = require('https') // Changed from 'http' to 'https'
 let connect = require('connect')
+let fs = require('fs') // Added to read SSL certificate and key
 
 let connectApp = connect()
 global.server = connectApp
@@ -15,7 +16,12 @@ let options = {
 }
 connectApp.use( rest.rester( options ) )
 
-let server = http.createServer( connectApp )
+let serverOptions = {
+	key: fs.readFileSync('path/to/your/private.key'), // Path to your private key
+	cert: fs.readFileSync('path/to/your/certificate.crt') // Path to your certificate
+}
+
+let server = https.createServer(serverOptions, connectApp) // Changed from http.createServer to https.createServer
 
 server.listen( 8095 )
 

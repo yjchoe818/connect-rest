@@ -1,5 +1,6 @@
 let should = require('chai').should()
 let http = require('http')
+let https = require('https') // Added for secure server
 
 let connect = require('connect')
 let bodyParser = require('body-parser')
@@ -33,7 +34,7 @@ app.use( restBuilder.getDispatcher( rest ) )
 restBuilder.buildUpRestAPI( rest )
 
 let port = process.env.PORT || 8080
-let server = http.createServer(app)
+let server = https.createServer(app) // Changed from http to https
 
 server.listen( port, function () {
 	console.log('Running on http://localhost:8080')

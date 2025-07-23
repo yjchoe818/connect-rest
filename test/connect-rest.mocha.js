@@ -3,6 +3,8 @@ const assert = require('assert')
 let chai = require('chai'),
 	should = chai.should()
 let http = require('http')
+let https = require('https')
+let fs = require('fs')
 
 let connect = require('connect')
 let bodyParser = require('body-parser')
@@ -54,10 +56,14 @@ describe('connect-rest', function () {
 		restBuilder.buildUpRestAPI( rester )
 
 		let port = process.env.PORT || 8080
-		server = http.createServer(app)
+		const httpsOptions = {
+			key: fs.readFileSync('path/to/your/private-key.pem'),
+			cert: fs.readFileSync('path/to/your/certificate.pem')
+		}
+		server = https.createServer(httpsOptions, app)
 
 		server.listen( port, function () {
-			console.log('Running on http://localhost:8080')
+			console.log('Running on https://localhost:8080')
 
 			done()
 		})

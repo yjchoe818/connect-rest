@@ -19,7 +19,16 @@ let options = {
 }
 connectApp.use( rest.rester( options ) )
 
-let server = http.createServer( connectApp )
+let https = require('https'); // Added to use https
+let fs = require('fs'); // Added to read SSL certificate files
+
+// Added SSL certificate options
+let sslOptions = {
+	key: fs.readFileSync('path/to/your/private-key.pem'),
+	cert: fs.readFileSync('path/to/your/certificate.pem')
+};
+
+let server = https.createServer(sslOptions, connectApp) // Changed from http to https
 
 server.listen( 8090 )
 

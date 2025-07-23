@@ -1,5 +1,6 @@
 let fs = require('fs')
 let Proback = require('proback.js')
+let path = require('path') // Added to resolve file paths safely
 
 function buildUpRestAPI ( rest ) {
 	// rest.context( '/api' )
@@ -100,7 +101,8 @@ function buildUpRestAPI ( rest ) {
 	}, { contentType: 'application/text' } )
 	rest.get('/handlers/stream/:file', async function ( request, content ) {
 		console.log( 'Received::' + request.format(), request.params )
-		return { result: fs.createReadStream( './test/data/' + request.params.file + '.text', { encoding: 'utf-8'} ), options: {statusCode: 201} }
+		let safePath = path.join(__dirname, 'test', 'data', path.basename(request.params.file) + '.text');
+		return { result: fs.createReadStream(safePath, { encoding: 'utf-8'} ), options: {statusCode: 201} }
 	})
 
 	rest.get( '/convert/@format', async function ( request, content ) {
@@ -134,7 +136,8 @@ function buildUpRestAPI ( rest ) {
 
 function getDispatcher (rest) {
 	return rest.dispatcher( 'GET', '/dispatcher/:subject', function (req, res, next) {
-		res.end( 'Dispatch call made:' + req.params.subject )
+		let safeSubject = req.params.subject.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		res.end( 'Dispatch call made:' + safeSubject )
 	} )
 }
 
